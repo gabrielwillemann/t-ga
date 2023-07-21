@@ -10,3 +10,7 @@ jobs:
     if: ${{ github.event.issue.pull_request }}
     steps:
       - run: echo "Create comment - Step 1"
+  my-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "my tests are ok now"
