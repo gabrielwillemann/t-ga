@@ -1,0 +1,13 @@
+name: manual
+
+on:
+  workflow_dispatch
+
+on:
+  pull_request
+
+jobs:
+  hello_world:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Hello World!"
