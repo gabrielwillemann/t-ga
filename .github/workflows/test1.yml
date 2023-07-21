@@ -1,10 +1,8 @@
 name: manual
 
-on:
-  workflow_dispatch
+on: workflow_dispatch
 
-on:
-  pull_request
+on: pull_request
 
 jobs:
   hello_world:
