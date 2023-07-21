@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - run: echo "Hello World!"
-  raise_error:
-    runs-on: ubuntu-latest
-    steps:
-      - run: exit 1
+  # raise_error:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - run: exit 1
