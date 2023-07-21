@@ -1,0 +1,17 @@
+name: manual
+
+on:
+  workflow_dispatch:
+    inputs:
+      test:
+        description: 'Test'
+        required: false
+        type: boolean
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  hello_world:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Hello World!"
