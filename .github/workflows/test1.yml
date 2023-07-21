@@ -1,8 +1,14 @@
-name: manual
+name: test1
 
 on:
-  workflow_dispatch
-  pull_request
+  workflow_dispatch:
+    inputs:
+      test:
+        description: 'Test'
+        required: false
+        type: boolean
+  pull_request:
+    branches: [ main, master ]
 
 jobs:
   hello_world:
