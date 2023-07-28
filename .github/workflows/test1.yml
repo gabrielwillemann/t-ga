@@ -16,13 +16,11 @@ jobs:
     steps:
       - run: echo "Hello World!"
       - run: docker --version
-      - run: ls -la
-      - run: ls -la ..
-      - run: ls -la ../..
-      - run: ls -la ../../..
-      - run: ls -la ../../../..
-      - run: ls -la ../../../../..
-      - run: ls -la ../../../../../..
+      - run: cd /;ls
+      - run: cd home;ls
+      - run: cd runner;ls
+      - run: cd t-ga;ls
+      - run: cd t-ga;ls
       - run: printenv
 
   # raise_error:
