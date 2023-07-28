@@ -15,10 +15,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - run: echo "Hello World!"
-  my-tests:
-    runs-on: ubuntu-latest
-    steps:
       - run: docker --version
+      - run: ls
+      - run: ls -la
 
   # raise_error:
   #   runs-on: ubuntu-latest
