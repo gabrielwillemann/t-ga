@@ -19,8 +19,8 @@ jobs:
       - run: cd /;ls
       - run: cd /home;ls
       - run: cd /home/runner;ls
-      - run: cd /home/runner/t-ga;ls
-      - run: cd /home/runner/t-ga/t-ga;ls
+      - run: cd /home/runner/runners/t-ga;ls
+      - run: cd /home/runner/runners/t-ga/t-ga;ls
       - run: printenv
 
   # raise_error:
