@@ -21,6 +21,8 @@ jobs:
       - run: ls -la ../..
       - run: ls -la ../../..
       - run: ls -la ../../../..
+      - run: ls -la ../../../../..
+      - run: ls -la ../../../../../..
       - run: printenv
 
   # raise_error:
