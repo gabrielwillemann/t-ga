@@ -19,6 +19,7 @@ jobs:
       - run: cd /;ls -la
       - run: cd /home;ls -la
       - run: cd /home/runner;ls -la
+      - run: cd /home/runner/work/;ls -la
       - run: cd /home/runner/work/t-ga;ls -la
       - run: cd /home/runner/work/t-ga/t-ga;ls -la
       - run: printenv
