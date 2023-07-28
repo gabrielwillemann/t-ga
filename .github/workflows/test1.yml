@@ -14,11 +14,14 @@ jobs:
   hello_world:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout PR Branch
+        uses: actions/checkout@v3
       - run: echo "Hello World!"
+      - run: ls -la
       # - run: docker --version
       # - run: cd /home/runner/work/t-ga/t-ga;ls -la
       # - run: printenv
-      - run: echo "${{ toJSON(github) }}"
+      # - run: echo "${{ toJSON(github) }}"
 
   # raise_error:
   #   runs-on: ubuntu-latest
