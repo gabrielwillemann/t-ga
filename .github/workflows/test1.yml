@@ -16,8 +16,8 @@ jobs:
     steps:
       - run: echo "Hello World!"
       - run: docker --version
-      - run: ls
       - run: ls -la
+      - run: printenv
 
   # raise_error:
   #   runs-on: ubuntu-latest
