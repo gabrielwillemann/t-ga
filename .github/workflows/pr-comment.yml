@@ -5,8 +5,10 @@ on:
     types: [created]
 
 jobs:
-  my_test:
+  my_test_on_comment:
     runs-on: ubuntu-latest
     if: ${{ github.event.issue.pull_request }}
     steps:
-      - run: echo "Created comment - Step 1"
+      - run: echo "Created comment on PR $PR_NUMBER"
+        env:
+          PR_NUMBER: ${{ github.event.issue.number }}
