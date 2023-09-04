@@ -1,0 +1,15 @@
+name: PR created or changed
+
+on:
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  my_build:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Built app = Ok!"
+  my_test:
+    runs-on: ubuntu-latest
+    steps:
+      - run: exit 1
