@@ -12,4 +12,4 @@ jobs:
       - run: echo "Created comment on PR $PR_NUMBER"
         env:
           PR_NUMBER: ${{ github.event.issue.number }}
-      - run: echo ${{ toJSON(github.event) }}
+      - run: echo "${{ toJSON(github.event) }}"
