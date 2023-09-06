@@ -28,16 +28,24 @@ jobs:
             echo "CAN_EXECUTE_TEST=false" >> $GITHUB_OUTPUT
           fi
       - name: Execute test
-        if: steps.parseComment.outputs.CAN_EXECUTE_TEST == 'TRUE'
+        if: steps.parseComment.outputs.CAN_EXECUTE_TEST == 'true'
         env:
           ENVIRONMENT: ${{ steps.parseComment.outputs.ENVIRONMENT }}
         run: echo "Execute in ${ENVIRONMENT}"
-      - name: Create comment
-        id: createComment
+      - name: Comment with results
+        if: steps.parseComment.outputs.CAN_EXECUTE_TEST == 'true'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PR_NUMBER: ${{ github.event.issue.number }}
           GIT_REPOSITORY: ${{ github.repository }}
         run: |
-          gh pr comment $PR_NUMBER --repo $GIT_REPOSITORY --body "Created by Github *action*"
-          
+          gh pr comment $PR_NUMBER --repo $GIT_REPOSITORY --body "Comment with results \n x"
+      - name: Comment tests skkiped
+        if: steps.parseComment.outputs.CAN_EXECUTE_TEST == 'false'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.issue.number }}
+          GIT_REPOSITORY: ${{ github.repository }}
+        run: |
+          gh pr comment $PR_NUMBER --repo $GIT_REPOSITORY --body "Tests skipped"
+
