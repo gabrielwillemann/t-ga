@@ -13,11 +13,11 @@ jobs:
       #   env:
       #     PR_NUMBER: ${{ github.event.issue.number }}
       # - run: echo "${{ toJSON(github.event.comment.body) }}"
-      - name: test
-        id: test
+      # - name: test
+      #   id: test
         # run: echo ${GITHUB_OUTPUT}
         # run: gh --help
-        run: echo ${{ secrets.GITHUB_TOKEN }}
+        # run: echo ${{ secrets.GITHUB_TOKEN }}
       - name: Parse comment
         id: parseComment
         env:
@@ -40,3 +40,12 @@ jobs:
         env:
           ENVIRONMENT: ${{ steps.parseComment.outputs.ENVIRONMENT }}
         run: echo "Execute in ${ENVIRONMENT}"
+      - name: Create comment
+        id: createComment
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.issue.number }}
+        run: |
+          gh pr comment $PR_NUMBER --body "Created by Github *action*"
+          gh issue edit $ISSUE_URL --add-label "triage"
+          
