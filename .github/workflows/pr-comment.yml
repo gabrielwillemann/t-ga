@@ -9,7 +9,27 @@ jobs:
     runs-on: ubuntu-latest
     if: ${{ github.event.issue.pull_request }}
     steps:
-      - run: echo "Created comment on PR $PR_NUMBER"
+      # - run: echo "Created comment on PR $PR_NUMBER"
+      #   env:
+      #     PR_NUMBER: ${{ github.event.issue.number }}
+      # - run: echo "${{ toJSON(github.event.comment.body) }}"
+      - name: Parse comment
+        id: parseComment
         env:
-          PR_NUMBER: ${{ github.event.issue.number }}
-      - run: echo "${{ toJSON(github.event.comment.body) }}"
+          COMMENT_TEXT: github.event.comment.body
+        run: |
+          COMMAND=${COMMENT_TEXT:0:5} 
+
+          if [[ $COMMAND == "/e2e " ]]
+          then
+            IFS=" "
+            read -ra COMMENT_ARRAY <<< "$COMMENT_TEXT"
+            ENVIRONMENT=${COMMENT_ARRAY[1]}
+            echo "EXECUTE_TEST=true" >> $GITHUB_OUTPUT
+            echo "ENVIRONMENT=${ENVIRONMENT}" >> $GITHUB_OUTPUT
+          else
+            echo "EXECUTE_TEST=false" >> $GITHUB_OUTPUT
+          fi
+      - name: Execute test
+        if: steps.parseComment.outputs.EXECUTE_TEST == 'TRUE'
+        run: echo "tests executed"
