@@ -9,15 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     if: ${{ github.event.issue.pull_request }}
     steps:
-      # - run: echo "Created comment on PR $PR_NUMBER"
-      #   env:
-      #     PR_NUMBER: ${{ github.event.issue.number }}
-      # - run: echo "${{ toJSON(github.event.comment.body) }}"
-      # - name: test
-      #   id: test
-        # run: echo ${GITHUB_OUTPUT}
-        # run: gh --help
-        # run: echo ${{ secrets.GITHUB_TOKEN }}
+      # - run: echo "${{ toJSON(github.event) }}"
       - name: Parse comment
         id: parseComment
         env:
@@ -43,7 +35,9 @@ jobs:
       - name: Create comment
         id: createComment
         env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PR_NUMBER: ${{ github.event.issue.number }}
+          GIT_REPOSITORY: ${{ github.repository }}
         run: |
-          gh pr comment $PR_NUMBER --repo "gabrielwillemann/t-ga" --body "Created by Github *action*"
+          gh pr comment $PR_NUMBER --repo $GIT_REPOSITORY --body "Created by Github *action*"
           
