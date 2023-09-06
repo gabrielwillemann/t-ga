@@ -26,7 +26,7 @@ jobs:
           then
             IFS=" "
             read -ra COMMENT_ARRAY <<< "$COMMENT_TEXT"
-            echo "3-${COMMENT_ARRAY}"
+            echo "3-${COMMENT_ARRAY[@]}"
             ENVIRONMENT=${COMMENT_ARRAY[1]}
             echo "4-${ENVIRONMENT}"
             echo "EXECUTE_TEST=true" >> $GITHUB_OUTPUT
@@ -38,5 +38,5 @@ jobs:
       - name: Execute test
         if: steps.parseComment.outputs.EXECUTE_TEST == 'TRUE'
         env:
-          ENVIRONMENT: steps.parseComment.outputs.ENVIRONMENT
+          ENVIRONMENT: ${{ steps.parseComment.outputs.ENVIRONMENT }}
         run: echo "Execute in ${ENVIRONMENT}"
