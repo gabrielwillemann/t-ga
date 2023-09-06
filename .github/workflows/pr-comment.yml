@@ -15,7 +15,8 @@ jobs:
       # - run: echo "${{ toJSON(github.event.comment.body) }}"
       - name: test
         id: test
-        run: echo ${GITHUB_OUTPUT}
+        # run: echo ${GITHUB_OUTPUT}
+        run: gh --help
       - name: Parse comment
         id: parseComment
         env:
