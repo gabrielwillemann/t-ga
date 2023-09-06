@@ -13,30 +13,28 @@ jobs:
       #   env:
       #     PR_NUMBER: ${{ github.event.issue.number }}
       # - run: echo "${{ toJSON(github.event.comment.body) }}"
+      - name: test
+        id: test
+        run: echo ${GITHUB_OUTPUT}
       - name: Parse comment
         id: parseComment
         env:
           COMMENT_TEXT: ${{ github.event.comment.body }}
         run: |
-          echo "1-${COMMENT_TEXT}"
           COMMAND=${COMMENT_TEXT:0:5} 
 
-          echo "2-${COMMAND}"
           if [[ $COMMAND == "/e2e " ]]
           then
             IFS=" "
             read -ra COMMENT_ARRAY <<< "$COMMENT_TEXT"
-            echo "3-${COMMENT_ARRAY[@]}"
             ENVIRONMENT=${COMMENT_ARRAY[1]}
-            echo "4-${ENVIRONMENT}"
-            echo "EXECUTE_TEST=true" >> $GITHUB_OUTPUT
+            echo "CAN_EXECUTE_TEST=true" >> $GITHUB_OUTPUT
             echo "ENVIRONMENT=${ENVIRONMENT}" >> $GITHUB_OUTPUT
           else
-            echo "PROBLEM!"
-            echo "EXECUTE_TEST=false" >> $GITHUB_OUTPUT
+            echo "CAN_EXECUTE_TEST=false" >> $GITHUB_OUTPUT
           fi
       - name: Execute test
-        if: steps.parseComment.outputs.EXECUTE_TEST == 'TRUE'
+        if: steps.parseComment.outputs.CAN_EXECUTE_TEST == 'TRUE'
         env:
           ENVIRONMENT: ${{ steps.parseComment.outputs.ENVIRONMENT }}
         run: echo "Execute in ${ENVIRONMENT}"
