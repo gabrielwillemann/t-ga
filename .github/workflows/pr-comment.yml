@@ -16,12 +16,12 @@ jobs:
       - name: Parse comment
         id: parseComment
         env:
-          COMMENT_TEXT: github.event.comment.body
+          COMMENT_TEXT: ${{ github.event.comment.body }}
         run: |
           echo "1-${COMMENT_TEXT}"
           COMMAND=${COMMENT_TEXT:0:5} 
 
-          echo "2-${COMMENT_TEXT}"
+          echo "2-${COMMAND}"
           if [[ $COMMENT_TEXT == "/e2e " ]]
           then
             IFS=" "
@@ -37,6 +37,6 @@ jobs:
           fi
       - name: Execute test
         if: steps.parseComment.outputs.EXECUTE_TEST == 'TRUE'
-        run: echo "Execute in ${ENVIRONMENT}"
         env:
           ENVIRONMENT: steps.parseComment.outputs.ENVIRONMENT
+        run: echo "Execute in ${ENVIRONMENT}"
