@@ -46,6 +46,5 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PR_NUMBER: ${{ github.event.issue.number }}
         run: |
-          gh pr comment $PR_NUMBER --body "Created by Github *action*"
-          gh issue edit $ISSUE_URL --add-label "triage"
+          gh pr comment $PR_NUMBER --repo "gabrielwillemann/t-ga" --body "Created by Github *action*"
           
