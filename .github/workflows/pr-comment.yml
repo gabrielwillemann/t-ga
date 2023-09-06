@@ -22,7 +22,7 @@ jobs:
           COMMAND=${COMMENT_TEXT:0:5} 
 
           echo "2-${COMMAND}"
-          if [[ $COMMENT_TEXT == "/e2e " ]]
+          if [[ $COMMAND == "/e2e " ]]
           then
             IFS=" "
             read -ra COMMENT_ARRAY <<< "$COMMENT_TEXT"
