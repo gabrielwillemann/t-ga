@@ -18,18 +18,25 @@ jobs:
         env:
           COMMENT_TEXT: github.event.comment.body
         run: |
+          echo "1-${COMMENT_TEXT}"
           COMMAND=${COMMENT_TEXT:0:5} 
 
-          if [[ $COMMAND == "/e2e " ]]
+          echo "2-${COMMENT_TEXT}"
+          if [[ $COMMENT_TEXT == "/e2e " ]]
           then
             IFS=" "
             read -ra COMMENT_ARRAY <<< "$COMMENT_TEXT"
+            echo "3-${COMMENT_ARRAY}"
             ENVIRONMENT=${COMMENT_ARRAY[1]}
+            echo "4-${ENVIRONMENT}"
             echo "EXECUTE_TEST=true" >> $GITHUB_OUTPUT
             echo "ENVIRONMENT=${ENVIRONMENT}" >> $GITHUB_OUTPUT
           else
+            echo "PROBLEM!"
             echo "EXECUTE_TEST=false" >> $GITHUB_OUTPUT
           fi
       - name: Execute test
         if: steps.parseComment.outputs.EXECUTE_TEST == 'TRUE'
-        run: echo "tests executed"
+        run: echo "Execute in ${ENVIRONMENT}"
+        env:
+          ENVIRONMENT: steps.parseComment.outputs.ENVIRONMENT
