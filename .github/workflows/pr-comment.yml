@@ -58,3 +58,13 @@ jobs:
         run: |
           gh pr comment $PR_NUMBER --body "Tests skipped by @$USER_NAME"
 
+      - name: "Mark PR as checked"
+        if: steps.parseComment.outputs.ACTION != 'NOTHING'
+        run: |
+          gh api \
+            --method POST /repos/$GH_REPO/statuses/$SHA \
+            -H "Accept: application/vnd.github+json" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            -f state='success' \
+            -f context='e2e_check' \
+            -f description='End to end testing'
