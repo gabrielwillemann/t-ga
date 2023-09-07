@@ -7,9 +7,18 @@ on:
 jobs:
   my_build:
     runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      GH_REPO: ${{ github.repository }}
+      SHA: ${{ github.event.pull_request.head.sha }}
     steps:
-      - run: echo "Built app = Ok!"
-  my_test:
-    runs-on: ubuntu-latest
-    steps:
-      - run: exit 1
+      - run: echo "${{ toJSON(github.event.pull_request.head.sha) }}"
+      - name: "Build"
+        run: echo "Ok"
+      - name: "E2E"
+        run: |
+          gh api \
+            --method POST /repos/$GH_REPO/statuses/$SHA \
+            -f state='pending' \
+            -f context='e2e_check' \
+            -f description='End to end testing'
