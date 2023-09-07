@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     if: ${{ github.event.issue.pull_request }}
     steps:
-      - run: echo "${{ toJSON(github.event.comment) }}"
+      # - run: echo "${{ toJSON(github.event.comment) }}"
       - name: Parse comment
         id: parseComment
         env:
