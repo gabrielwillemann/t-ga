@@ -8,8 +8,14 @@ jobs:
   my_test_on_comment:
     runs-on: ubuntu-latest
     if: ${{ github.event.issue.pull_request }}
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      GH_REPO: ${{ github.repository }}
+      PR_NUMBER: ${{ github.event.issue.number }}
+      USER_NAME: ${{ github.event.comment.user.login }}
     steps:
       # - run: echo "${{ toJSON(github.event.comment) }}"
+
       - name: Parse comment
         id: parseComment
         env:
@@ -33,28 +39,22 @@ jobs:
           else
             echo "ACTION=NOTHING" >> $GITHUB_OUTPUT
           fi
+
       - name: Execute test
         if: steps.parseComment.outputs.ACTION == 'RUN_TEST'
         env:
           ENVIRONMENT: ${{ steps.parseComment.outputs.ENVIRONMENT }}
         run: echo "Run tests in ${ENVIRONMENT}"
+
       - name: Comment with results
         if: steps.parseComment.outputs.ACTION == 'RUN_TEST'
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GH_REPO: ${{ github.repository }}
-          PR_NUMBER: ${{ github.event.issue.number }}
-          USER_NAME: ${{ github.event.comment.user.login }}
           ENVIRONMENT: ${{ steps.parseComment.outputs.ENVIRONMENT }}
         run: |
           gh pr comment $PR_NUMBER --body "Tests ran by @$USER_NAME in $ENVIRONMENT"
+
       - name: Comment tests skkiped
         if: steps.parseComment.outputs.ACTION == 'SKIP_TEST'
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GH_REPO: ${{ github.repository }}
-          PR_NUMBER: ${{ github.event.issue.number }}
-          USER_NAME: ${{ github.event.comment.user.login }}
         run: |
           gh pr comment $PR_NUMBER --body "Tests skipped by @$USER_NAME"
 
