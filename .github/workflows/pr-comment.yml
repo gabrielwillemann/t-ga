@@ -13,6 +13,9 @@ jobs:
       GH_REPO: ${{ github.repository }}
       PR_NUMBER: ${{ github.event.issue.number }}
       USER_NAME: ${{ github.event.comment.user.login }}
+
+      # TO-DO
+      SHA: 2e77212e294719db2f9f2dc0bf4c13102ef46fd7
     steps:
       # - run: echo "${{ toJSON(github.event.comment) }}"
 
