@@ -47,7 +47,7 @@ jobs:
         run: |
           gh pr comment $PR_NUMBER --body "Comment with results \n x"
       - name: Comment tests skkiped
-        if: steps.parseComment.outputs.RUN_TEST == 'SKIP_TEST'
+        if: steps.parseComment.outputs.ACTION == 'SKIP_TEST'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PR_NUMBER: ${{ github.event.issue.number }}
