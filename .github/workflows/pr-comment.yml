@@ -15,37 +15,43 @@ jobs:
         env:
           COMMENT_TEXT: ${{ github.event.comment.body }}
         run: |
-          COMMAND=${COMMENT_TEXT:0:5} 
+          IFS=" "
+          read -ra COMMENT_ARRAY <<< "$COMMENT_TEXT"
 
-          if [[ $COMMAND == "/e2e " ]]
+          COMMAND=${COMMENT_ARRAY[0]} 
+          PARAMETER=${COMMENT_ARRAY[1]}
+
+          if [[ $COMMAND == "/e2e" && $PARAMETER != "" ]]
           then
-            IFS=" "
-            read -ra COMMENT_ARRAY <<< "$COMMENT_TEXT"
-            ENVIRONMENT=${COMMENT_ARRAY[1]}
-            echo "CAN_EXECUTE_TEST=true" >> $GITHUB_OUTPUT
-            echo "ENVIRONMENT=${ENVIRONMENT}" >> $GITHUB_OUTPUT
+            if [[ $PARAMETER == "skip" ]]
+            then
+              echo "ACTION=SKIP_TEST" >> $GITHUB_OUTPUT
+            else
+              echo "ACTION=RUN_TEST" >> $GITHUB_OUTPUT
+              echo "ENVIRONMENT=${PARAMETER}" >> $GITHUB_OUTPUT
+            fi
           else
-            echo "CAN_EXECUTE_TEST=false" >> $GITHUB_OUTPUT
+            echo "ACTION=NOTHING" >> $GITHUB_OUTPUT
           fi
       - name: Execute test
-        if: steps.parseComment.outputs.CAN_EXECUTE_TEST == 'true'
+        if: steps.parseComment.outputs.ACTION == 'RUN_TEST'
         env:
           ENVIRONMENT: ${{ steps.parseComment.outputs.ENVIRONMENT }}
-        run: echo "Execute in ${ENVIRONMENT}"
+        run: echo "Run tests in ${ENVIRONMENT}"
       - name: Comment with results
-        if: steps.parseComment.outputs.CAN_EXECUTE_TEST == 'true'
+        if: steps.parseComment.outputs.ACTION == 'RUN_TEST'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PR_NUMBER: ${{ github.event.issue.number }}
-          GIT_REPOSITORY: ${{ github.repository }}
+          GH_REPO: ${{ github.repository }}
         run: |
-          gh pr comment $PR_NUMBER --repo $GIT_REPOSITORY --body "Comment with results \n x"
+          gh pr comment $PR_NUMBER --body "Comment with results \n x"
       - name: Comment tests skkiped
-        if: steps.parseComment.outputs.CAN_EXECUTE_TEST == 'false'
+        if: steps.parseComment.outputs.RUN_TEST == 'SKIP_TEST'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PR_NUMBER: ${{ github.event.issue.number }}
-          GIT_REPOSITORY: ${{ github.repository }}
+          GH_REPO: ${{ github.repository }}
         run: |
-          gh pr comment $PR_NUMBER --repo $GIT_REPOSITORY --body "Tests skipped"
+          gh pr comment $PR_NUMBER --body "Tests skipped"
 

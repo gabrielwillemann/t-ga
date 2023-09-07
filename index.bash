@@ -1,40 +1,35 @@
-comment="/e2e dev3"
+COMMENT_TEXT="/e2e skip"
 
-# Substring
-command=${comment:0:5} 
+IFS=" "
+read -ra COMMENT_ARRAY <<< "$COMMENT_TEXT"
 
-if [[ $command == "/e2e " ]]
+COMMAND=${COMMENT_ARRAY[0]} 
+PARAMETER=${COMMENT_ARRAY[1]}
+
+if [[ $COMMAND == "/e2e" && $PARAMETER != "" ]]
 then
-  # Native variable: Internal Field Separator
-  IFS=" "
-
-  # Split string by space using IFS
-  read -ra comment_array <<< "$comment"
-
-  environment=${comment_array[1]}
-  echo ${environment}
+  if [[ $PARAMETER == "skip" ]]
+  then
+    echo "ACTION=SKIP_TEST" >> $GITHUB_OUTPUT
+  else
+    echo "ACTION=RUN_TEST" >> $GITHUB_OUTPUT
+    echo "ENVIRONMENT=${PARAMETER}" >> $GITHUB_OUTPUT
+  fi
 else
-  echo "false"
+  echo "ACTION=NOTHING" >> $GITHUB_OUTPUT
 fi
 
-# export regex_command="^\/e2e\ "
-# if [[ $comment =~ $regex_command ]]
+# comment="/e2e dev3"
+# command=${comment:0:5} 
+# if [[ $command == "/e2e " ]]
 # then
-#   echo "true"
+#   IFS=" "
+#   read -ra comment_array <<< "$comment"
+#   environment=${comment_array[1]}
+#   echo ${environment}
 # else
 #   echo "false"
 # fi
 
-# myArray=("cat" "dog" "mouse" "frog")
-# for str in ${myArray[@]}; do
-#   echo $str
-# done
 
-# mystring="1 2 3 4"
-# IFS=" "
-# for value in $mystring
-# do
-#   echo $value
-# done
-# read -ra myarray <<< "$mystring"
-# echo ${myarray[1]}
+
