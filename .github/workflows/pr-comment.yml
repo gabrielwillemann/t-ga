@@ -17,7 +17,7 @@ jobs:
       # TO-DO
       SHA: 2e77212e294719db2f9f2dc0bf4c13102ef46fd7
     steps:
-      # - run: echo "${{ toJSON(github.event.comment) }}"
+      - run: echo "${{ toJSON(github.event) }}"
 
       - name: Parse comment
         id: parseComment
