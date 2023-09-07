@@ -42,16 +42,18 @@ jobs:
         if: steps.parseComment.outputs.ACTION == 'RUN_TEST'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          PR_NUMBER: ${{ github.event.issue.number }}
           GH_REPO: ${{ github.repository }}
+          PR_NUMBER: ${{ github.event.issue.number }}
+          USER_NAME: ${{ github.event.user.login }}
         run: |
-          gh pr comment $PR_NUMBER --body "Tested by "
+          gh pr comment $PR_NUMBER --body "Tested by $USER_NAME"
       - name: Comment tests skkiped
         if: steps.parseComment.outputs.ACTION == 'SKIP_TEST'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          PR_NUMBER: ${{ github.event.issue.number }}
           GH_REPO: ${{ github.repository }}
+          PR_NUMBER: ${{ github.event.issue.number }}
+          USER_NAME: ${{ github.event.user.login }}
         run: |
-          gh pr comment $PR_NUMBER --body "Tests skipped by "
+          gh pr comment $PR_NUMBER --body "Tests skipped by $USER_NAME"
 
