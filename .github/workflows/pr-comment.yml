@@ -46,7 +46,7 @@ jobs:
           PR_NUMBER: ${{ github.event.issue.number }}
           USER_NAME: ${{ github.event.comment.user.login }}
         run: |
-          gh pr comment $PR_NUMBER --body "Tested by $USER_NAME"
+          gh pr comment $PR_NUMBER --body "Tests ran by @$USER_NAME"
       - name: Comment tests skkiped
         if: steps.parseComment.outputs.ACTION == 'SKIP_TEST'
         env:
@@ -55,5 +55,5 @@ jobs:
           PR_NUMBER: ${{ github.event.issue.number }}
           USER_NAME: ${{ github.event.comment.user.login }}
         run: |
-          gh pr comment $PR_NUMBER --body "Tests skipped by $USER_NAME"
+          gh pr comment $PR_NUMBER --body "Tests skipped by @$USER_NAME"
 
