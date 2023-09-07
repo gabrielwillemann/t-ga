@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     if: ${{ github.event.issue.pull_request }}
     steps:
-      # - run: echo "${{ toJSON(github.event) }}"
+      - run: echo "${{ toJSON(github.event.comment) }}"
       - name: Parse comment
         id: parseComment
         env:
@@ -45,7 +45,7 @@ jobs:
           PR_NUMBER: ${{ github.event.issue.number }}
           GH_REPO: ${{ github.repository }}
         run: |
-          gh pr comment $PR_NUMBER --body "Comment with results \n x"
+          gh pr comment $PR_NUMBER --body "Tested by "
       - name: Comment tests skkiped
         if: steps.parseComment.outputs.ACTION == 'SKIP_TEST'
         env:
@@ -53,5 +53,5 @@ jobs:
           PR_NUMBER: ${{ github.event.issue.number }}
           GH_REPO: ${{ github.repository }}
         run: |
-          gh pr comment $PR_NUMBER --body "Tests skipped"
+          gh pr comment $PR_NUMBER --body "Tests skipped by "
 
