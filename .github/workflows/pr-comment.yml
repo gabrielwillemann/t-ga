@@ -63,11 +63,8 @@ jobs:
         id: getSHA
         env:
           GH_API_HEADERS: "-H \"Accept: application/vnd.github+json\" -H \"X-GitHub-Api-Version: 2022-11-28\" "
-          GH_COMMAND: "gh api -H \"Accept: application/vnd.github+json\" -H \"X-GitHub-Api-Version: 2022-11-28\" /repos/$GH_REPO/pulls/$PR_NUMBER"
         run: |
-          PR_JSON=$($GH_COMMAND)
-          SHA=$(echo $PR_JSON | jq -r .head.sha)
-          echo "SHA=$SHA" >> $GITHUB_OUTPUT
+          PR_JSON=$(gh api $GH_API_HEADERS /repos/$GH_REPO/pulls/$PR_NUMBER)
 
       - name: Mark PR as checked
         if: steps.parseComment.outputs.ACTION != 'NOTHING'
