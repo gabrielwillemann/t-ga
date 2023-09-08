@@ -64,7 +64,7 @@ jobs:
         env:
           GH_API_HEADERS: "-H \"Accept: application/vnd.github+json\" -H \"X-GitHub-Api-Version: 2022-11-28\" "
         run: |
-          PR_JSON=$(gh api $GH_API_HEADERS /repos/$GH_REPO/pulls/$PR_NUMBER)
+          gh api $GH_API_HEADERS /repos/$GH_REPO/pulls/$PR_NUMBER
 
       - name: Mark PR as checked
         if: steps.parseComment.outputs.ACTION != 'NOTHING'
