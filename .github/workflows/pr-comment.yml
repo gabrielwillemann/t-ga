@@ -51,8 +51,8 @@ jobs:
         uses: actions/checkout@v4
         with: 
           repository: viafoura/cypress-e2e-testing
-          ref: heads/main
           token: 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
+          # ref: heads/main
 
       - name: Execute test
         if: steps.parseComment.outputs.ACTION == 'RUN_TEST'
