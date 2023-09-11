@@ -48,7 +48,7 @@ jobs:
         if: steps.parseComment.outputs.ACTION == 'RUN_TEST'
         uses: actions/checkout@v4
         with: 
-          repository: 'viafoura/cypress-e2e-testing'
+          repository: viafoura/cypress-e2e-testing
 
       - name: Execute test
         if: steps.parseComment.outputs.ACTION == 'RUN_TEST'
