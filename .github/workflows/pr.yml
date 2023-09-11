@@ -12,7 +12,7 @@ jobs:
       GH_REPO: ${{ github.repository }}
       REF: heads/${{ github.event.pull_request.head.ref }}
     steps:
-      - run: echo "${{ toJSON(github.event.pull_request.head.ref) }}"
+      - run: echo "${{ toJSON(github.event) }}"
       - name: "Build"
         run: echo "Ok"
       - name: "E2E"
