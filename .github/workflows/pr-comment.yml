@@ -50,8 +50,8 @@ jobs:
         if: steps.parseComment.outputs.ACTION == 'RUN_TEST'
         uses: actions/checkout@v4
         with: 
-          repository: gabrielwillemann/cypress-e2e-testing
-          token: ${{ secrets.GITHUB_TOKEN }}
+          repository: gabrielwillemann/rails-graphql-example
+          # token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Execute test
         if: steps.parseComment.outputs.ACTION == 'RUN_TEST'
