@@ -52,7 +52,7 @@ jobs:
         with: 
           repository: viafoura/cypress-e2e-testing
           ref: heads/main
-          # token: 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
+          token: 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
 
       - name: Execute test
         if: steps.parseComment.outputs.ACTION == 'RUN_TEST'
