@@ -14,6 +14,9 @@ jobs:
       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       GH_REPO: ${{ github.repository }}
       SHA: ${{ github.event.pull_request.head.sha }}
+      STATUS_CHECK_STATE: pending
+      STATUS_CHECK_CONTEXT: e2e_check
+      STATUS_CHECK_DESCRIPTION: End to end testing
     steps:
       - run: echo "${{ toJSON(github.event) }}"
       - name: "Build"
@@ -22,6 +25,6 @@ jobs:
         run: |
           gh api \
             --method POST /repos/$GH_REPO/statuses/$SHA \
-            -f state='pending' \
-            -f context='e2e_check' \
-            -f description='End to end testing'
+            -f state="$STATUS_CHECK_STATE" \
+            -f context="$STATUS_CHECK_CONTEXT" \
+            -f description="$STATUS_CHECK_DESCRIPTION"
