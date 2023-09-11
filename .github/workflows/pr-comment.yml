@@ -61,10 +61,10 @@ jobs:
       - name: Get SHA of PR
         if: steps.parseComment.outputs.ACTION != 'NOTHING'
         id: getSHA
-        env:
-          GH_API_HEADERS: " -H \"Accept: application/vnd.github+json\" -H \"X-GitHub-Api-Version: 2022-11-28\" "
         run: |
-          gh api ${GH_API_HEADERS} /repos/$GH_REPO/pulls/$PR_NUMBER
+          PR_JSON=$(gh api /repos/$GH_REPO/pulls/$PR_NUMBER)
+          SHA=$(echo $PR_JSON | jq -r .head.sha)
+          echo "SHA=$SHA" >> $GITHUB_OUTPUT
 
       - name: Mark PR as checked
         if: steps.parseComment.outputs.ACTION != 'NOTHING'
@@ -73,8 +73,6 @@ jobs:
         run: |
           gh api \
             --method POST /repos/$GH_REPO/statuses/$SHA \
-            -H "Accept: application/vnd.github+json" \
-            -H "X-GitHub-Api-Version: 2022-11-28" \
             -f state='success' \
             -f context='e2e_check' \
             -f description='End to end testing'
