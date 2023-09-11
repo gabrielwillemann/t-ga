@@ -19,6 +19,8 @@ jobs:
 
     steps:
       - run: echo "${{ toJSON(github.event) }}"
+      - run: echo "${{ toJSON(github.token) }}"
+      - run: echo "$GH_TOKEN"
 
       - name: Parse comment
         id: parseComment
