@@ -10,15 +10,15 @@ jobs:
     env:
       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       GH_REPO: ${{ github.repository }}
-      SHA: ${{ github.event.pull_request.head.sha }}
+      REF: heads/${{ github.event.pull_request.head.ref }}
     steps:
-      - run: echo "${{ toJSON(github.event.pull_request.head.sha) }}"
+      - run: echo "${{ toJSON(github.event.pull_request.head.ref) }}"
       - name: "Build"
         run: echo "Ok"
       - name: "E2E"
         run: |
           gh api \
-            --method POST /repos/$GH_REPO/statuses/$SHA \
+            --method POST /repos/$GH_REPO/statuses/$REF \
             -f state='pending' \
             -f context='e2e_check' \
             -f description='End to end testing'
