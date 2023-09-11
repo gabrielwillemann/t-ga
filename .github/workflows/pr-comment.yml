@@ -44,11 +44,19 @@ jobs:
             echo "ACTION=NOTHING" >> $GITHUB_OUTPUT
           fi
 
+      - name: Checkout tests
+        if: steps.parseComment.outputs.ACTION == 'RUN_TEST'
+        uses: actions/checkout@v4
+        with: 
+          repository: 'viafoura/cypress-e2e-testing'
+
       - name: Execute test
         if: steps.parseComment.outputs.ACTION == 'RUN_TEST'
         env:
           ENVIRONMENT: ${{ steps.parseComment.outputs.ENVIRONMENT }}
-        run: echo "Run tests in ${ENVIRONMENT}"
+        run: |
+          echo "Run tests in ${ENVIRONMENT}"
+          ls -la
 
       - name: Comment with results
         if: steps.parseComment.outputs.ACTION == 'RUN_TEST'
