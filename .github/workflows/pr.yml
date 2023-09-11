@@ -4,6 +4,9 @@ on:
   pull_request:
     branches: [ main, master ]
 
+permissions:
+  statuses: write
+
 jobs:
   my_build:
     runs-on: ubuntu-latest
