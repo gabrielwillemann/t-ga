@@ -50,7 +50,7 @@ jobs:
         if: steps.parseComment.outputs.ACTION == 'RUN_TEST'
         uses: actions/checkout@v4
         with: 
-          repository: gabrielwillemann/fast-help
+          repository: gabrielwillemann/fast-help.git
           # repository: gabrielwillemann/t-ga
           # repository: viafoura/cypress-e2e-testing
           # token: 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
