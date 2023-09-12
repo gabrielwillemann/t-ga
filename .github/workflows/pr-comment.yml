@@ -53,7 +53,7 @@ jobs:
           repository: gabrielwillemann/fast-help
           # repository: gabrielwillemann/t-ga
           # repository: viafoura/cypress-e2e-testing
-          token: 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
+          token: ${{ secrets.MY_PTA }}
           # ref: heads/main
 
       - name: Execute test
