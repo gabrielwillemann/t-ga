@@ -52,7 +52,7 @@ jobs:
         with: 
           repository: gabrielwillemann/fast-help
           # repository: viafoura/cypress-e2e-testing
-          token: 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
+          # token: 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
           # ref: heads/main
 
       - name: Execute test
