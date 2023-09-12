@@ -50,12 +50,11 @@ jobs:
         if: steps.parseComment.outputs.ACTION == 'RUN_TEST'
         uses: actions/checkout@v4
         with: 
-          # repository: gabrielwillemann/fast-help
-          # repository: gabrielwillemann/t-ga
           repository: viafoura/cypress-e2e-testing
-          # token: ${{ secrets.MY_PTA }}
-          token: ${{ secrets.GITHUB_TOKEN }}
-          # ref: heads/main
+
+          # https://stackoverflow.com/questions/71068476/accessing-another-repository-with-github-cli-in-github-actions
+          # TO-DO: Ask for SRE to generate a token in production
+          token: ${{ secrets.MY_PTA }}
 
       - name: Execute test
         if: steps.parseComment.outputs.ACTION == 'RUN_TEST'
