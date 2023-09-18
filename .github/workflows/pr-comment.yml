@@ -83,7 +83,7 @@ jobs:
 
       - name: Convert Results from JSON to Markdown
         if: steps.parseComment.outputs.ACTION == 'RUN_TEST'
-        shell: node
+        shell: node {0}
         run: |
           const result = require('./cypress/results/result.json');
           console.log(result);
