@@ -58,13 +58,17 @@ jobs:
           # TO-DO: Ask for SRE to generate a token in production
           token: ${{ secrets.MY_PTA }}
 
+      - name: Install Test Dependencies
+        if: steps.parseComment.outputs.ACTION == 'RUN_TEST'
+        run: |
+          npm ci
+
       - name: Execute test
         if: steps.parseComment.outputs.ACTION == 'RUN_TEST'
         env:
           ENVIRONMENT: ${{ steps.parseComment.outputs.ENVIRONMENT }}
         run: |
-          echo "Run tests in ${ENVIRONMENT}"
-          ls -la
+          npm run cypress:run:ci
 
       - name: Comment with results
         if: steps.parseComment.outputs.ACTION == 'RUN_TEST'
