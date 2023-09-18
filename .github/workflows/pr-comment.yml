@@ -18,9 +18,11 @@ jobs:
       STATUS_CHECK_DESCRIPTION: End to end testing
 
     steps:
-      - run: echo "${{ toJSON(github.event) }}"
-      - run: echo "${{ toJSON(github.token) }}"
-      - run: echo "$GH_TOKEN"
+      # - run: echo "${{ toJSON(github.event) }}"
+      # - run: echo "${{ toJSON(github.token) }}"
+      # - run: echo "$GH_TOKEN"
+      - run: node --version
+      - run: npm --version
 
       - name: Parse comment
         id: parseComment
