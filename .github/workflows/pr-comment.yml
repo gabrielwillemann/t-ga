@@ -76,8 +76,10 @@ jobs:
         if: steps.parseComment.outputs.ACTION == 'RUN_TEST'
         env:
           ENVIRONMENT: ${{ steps.parseComment.outputs.ENVIRONMENT }}
+          NEWLINE: \n
         run: |
-          gh pr comment $PR_NUMBER --body "Tests ran by @$USER_NAME in $ENVIRONMENT"
+          export NL=$(printf '\x10')
+          gh pr comment $PR_NUMBER --body "Tests executed by @$USER_NAME in $ENVIRONMENT $NL aaaa"
 
       - name: Comment tests skkiped
         if: steps.parseComment.outputs.ACTION == 'SKIP_TEST'
