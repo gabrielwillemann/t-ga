@@ -79,7 +79,8 @@ jobs:
           NEWLINE: \n
         run: |
           export NL=$(printf '\x10')
-          gh pr comment $PR_NUMBER --body "Tests executed by @$USER_NAME in $ENVIRONMENT $NL aaaa"
+          export CR=$(printf '\x13')
+          gh pr comment $PR_NUMBER --body "Tests executed by @$USER_NAME in $ENVIRONMENT $NL aaaa $CR bbbb $NL$CR cccc"
 
       - name: Comment tests skkiped
         if: steps.parseComment.outputs.ACTION == 'SKIP_TEST'
