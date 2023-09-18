@@ -13,21 +13,21 @@ jobs:
       GH_REPO: ${{ github.repository }}
       PR_NUMBER: ${{ github.event.issue.number }}
       USER_NAME: ${{ github.event.comment.user.login }}
+      COMMENT_TEXT: ${{ github.event.comment.body }}
       STATUS_CHECK_STATE: success
       STATUS_CHECK_CONTEXT: e2e_check
       STATUS_CHECK_DESCRIPTION: End to end testing
+      NODE_VERSION: 18
 
     steps:
       # - run: echo "${{ toJSON(github.event) }}"
       # - run: echo "${{ toJSON(github.token) }}"
       # - run: echo "$GH_TOKEN"
-      - run: node --version
-      - run: npm --version
+      # - run: node --version
+      # - run: npm --version
 
       - name: Parse comment
         id: parseComment
-        env:
-          COMMENT_TEXT: ${{ github.event.comment.body }}
         run: |
           IFS=" "
           read -ra COMMENT_ARRAY <<< "$COMMENT_TEXT"
@@ -48,6 +48,12 @@ jobs:
             echo "ACTION=NOTHING" >> $GITHUB_OUTPUT
           fi
 
+      - name: Install Node ${{ env.NODE_VERSION }}
+        if: steps.parseComment.outputs.ACTION == 'RUN_TEST'
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
       - name: Checkout tests
         if: steps.parseComment.outputs.ACTION == 'RUN_TEST'
         uses: actions/checkout@v4
@@ -58,6 +64,7 @@ jobs:
 
           # https://stackoverflow.com/questions/71068476/accessing-another-repository-with-github-cli-in-github-actions
           # TO-DO: Ask for SRE to generate a token in production
+          # TO-DO: Use it as global env
           token: ${{ secrets.MY_PTA }}
 
       - name: Copy Environment Variables
@@ -74,15 +81,19 @@ jobs:
         if: steps.parseComment.outputs.ACTION == 'RUN_TEST'
         run: npm run cypress:run:ci
 
+      - name: Convert Results from JSON to Markdown
+        if: steps.parseComment.outputs.ACTION == 'RUN_TEST'
+        shell: node
+        run: |
+          const result = require('./cypress/results/result.json');
+          console.log(result);
+
       - name: Comment with results
         if: steps.parseComment.outputs.ACTION == 'RUN_TEST'
         env:
           ENVIRONMENT: ${{ steps.parseComment.outputs.ENVIRONMENT }}
-          NEWLINE: \n
-        run: |
-          export NL=$(printf '\x10')
-          export CR=$(printf '\x13')
-          gh pr comment $PR_NUMBER --body "Tests executed by @$USER_NAME in $ENVIRONMENT $NL aaaa $CR bbbb $NL$CR cccc"
+        # run: echo result.markdown | gh pr comment $PR_NUMBER --body-file -
+        run: gh pr comment $PR_NUMBER --body "Tests executed by @$USER_NAME in $ENVIRONMENT"
 
       - name: Comment tests skkiped
         if: steps.parseComment.outputs.ACTION == 'SKIP_TEST'
