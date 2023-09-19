@@ -29,6 +29,7 @@ jobs:
       - name: Parse comment
         id: parseComment
         run: |
+          IFS=" "
           read -ra COMMENT_ARRAY <<< "$COMMENT_TEXT"
 
           COMMAND=${COMMENT_ARRAY[0]} 

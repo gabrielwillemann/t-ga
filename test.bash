@@ -1,3 +1,15 @@
+mystring="a
+b
+c
+d"
+IFS="\n"
+
+read -ra myarray <<< "$mystring"
+echo ${myarray[0]}
+echo ${myarray[1]}
+echo ${myarray[2]}
+echo ${myarray[3]}
+
 
 # export regex_command="^\/e2e\ "
 # if [[ $comment =~ $regex_command ]]
