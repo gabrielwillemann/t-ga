@@ -78,11 +78,15 @@ jobs:
         run: npm ci
 
       - name: Execute tests
-        id: executeTests
         if: steps.parseComment.outputs.ACTION == 'RUN_TEST'
         continue-on-error: true
         run: |
           npm run cypress:run:ci
+
+      - name: Get test result
+        id: getTestResult
+        if: steps.parseComment.outputs.ACTION == 'RUN_TEST'
+        run: |
           TEST_STATUS=$(cat $TEST_RESULT_FILE_JSON | jq -r .status)
           echo "TEST_STATUS=$TEST_STATUS" >> $GITHUB_OUTPUT
 
@@ -118,7 +122,7 @@ jobs:
         if: steps.parseComment.outputs.ACTION != 'NOTHING'
         env: 
           ACTION: ${{ steps.parseComment.outputs.ACTION }}
-          TEST_STATUS: ${{ steps.executeTests.outputs.TEST_STATUS }}
+          TEST_STATUS: ${{ steps.getTestResult.outputs.TEST_STATUS }}
         run: |
           if [[ $ACTION == "RUN_TEST" ]]
           then
