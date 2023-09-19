@@ -18,6 +18,8 @@ jobs:
       STATUS_CHECK_CONTEXT: e2e_check
       STATUS_CHECK_DESCRIPTION: End to end testing
       NODE_VERSION: 18
+      TEST_RESULT_FILE_JSON: cypress/results/result.json
+      TEST_RESULT_FILE_MARKDOWN: cypress/results/result.markdown
 
     steps:
       # - run: echo "${{ toJSON(github.event) }}"
@@ -77,15 +79,22 @@ jobs:
         if: steps.parseComment.outputs.ACTION == 'RUN_TEST'
         run: npm ci
 
-      - name: Execute test
+      - name: Execute tests
+        id: executeTests
         if: steps.parseComment.outputs.ACTION == 'RUN_TEST'
-        run: npm run cypress:run:ci
+        run: |
+          npm run cypress:run:ci
+          TESTS_HAS_FAILURE=$(cat $TEST_RESULT_FILE_JSON | jq -r .hasFailure)
+          echo "TESTS_HAS_FAILURE=$TESTS_HAS_FAILURE" >> $GITHUB_OUTPUT
 
       - name: Convert Results from JSON to Markdown
         if: steps.parseComment.outputs.ACTION == 'RUN_TEST'
+        env:
+          FILE_INPUT: ${{ env.GITHUB_WORKSPACE }}/${{ env.TEST_RESULT_FILE_JSON }}
+          FILE_OUTPUT: ${{ env.GITHUB_WORKSPACE }}/${{ env.TEST_RESULT_FILE_MARKDOWN }}
         shell: node {0}
         run: |
-          const result = require('./cypress/results/result.json');
+          const result = require(process.env.FILE_INPUT);
           console.log(result);
 
       - name: Comment with results
