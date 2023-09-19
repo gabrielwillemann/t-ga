@@ -129,7 +129,7 @@ jobs:
       - name: Update PR check
         if: steps.parseComment.outputs.ACTION != 'NOTHING'
         env:
-          SHA: ${{ steps.executeTests.outputs.SHA  }}
+          SHA: ${{ steps.getSHA.outputs.SHA  }}
           STATUS_CHECK_STATE: ${{ steps.getPRCheckState.outputs.PR_CHECK_STATE }}  # Can be one of: error, failure, pending, success
           STATUS_CHECK_CONTEXT: e2e_check
           STATUS_CHECK_DESCRIPTION: End to end testing
