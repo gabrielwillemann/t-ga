@@ -22,6 +22,7 @@ jobs:
       TEST_RESULT_FILE_MARKDOWN: cypress/results/result.markdown
 
     steps:
+      - run: echo "${{ toJSON(github.workspace) }}"
       # - run: echo "${{ toJSON(github.event) }}"
       # - run: echo "${{ toJSON(github.token) }}"
       # - run: echo "$GH_TOKEN"
@@ -90,8 +91,8 @@ jobs:
       - name: Convert Results from JSON to Markdown
         if: steps.parseComment.outputs.ACTION == 'RUN_TEST'
         env:
-          FILE_INPUT: ${{ env.GITHUB_WORKSPACE }}/${{ env.TEST_RESULT_FILE_JSON }}
-          FILE_OUTPUT: ${{ env.GITHUB_WORKSPACE }}/${{ env.TEST_RESULT_FILE_MARKDOWN }}
+          FILE_INPUT: ${{ github.workspace }}/${{ env.TEST_RESULT_FILE_JSON }}
+          FILE_OUTPUT: ${{ github.workspace }}/${{ env.TEST_RESULT_FILE_MARKDOWN }}
         shell: node {0}
         run: |
           const result = require(process.env.FILE_INPUT);
