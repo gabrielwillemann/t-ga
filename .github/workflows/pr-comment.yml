@@ -80,6 +80,7 @@ jobs:
       - name: Execute tests
         id: executeTests
         if: steps.parseComment.outputs.ACTION == 'RUN_TEST'
+        continue-on-error: true
         run: |
           npm run cypress:run:ci
           TEST_STATUS=$(cat $TEST_RESULT_FILE_JSON | jq -r .status)
