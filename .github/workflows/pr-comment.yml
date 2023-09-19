@@ -9,15 +9,12 @@ jobs:
     runs-on: ubuntu-latest
     if: ${{ github.event.issue.pull_request }}
     env:
+      NODE_VERSION: 18
       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       GH_REPO: ${{ github.repository }}
       PR_NUMBER: ${{ github.event.issue.number }}
       USER_NAME: ${{ github.event.comment.user.login }}
       COMMENT_TEXT: ${{ github.event.comment.body }}
-      STATUS_CHECK_STATE: success
-      STATUS_CHECK_CONTEXT: e2e_check
-      STATUS_CHECK_DESCRIPTION: End to end testing
-      NODE_VERSION: 18
       TEST_RESULT_FILE_JSON: cypress/results/result.json
       TEST_RESULT_FILE_MARKDOWN: cypress/results/result.md
 
@@ -85,14 +82,15 @@ jobs:
         if: steps.parseComment.outputs.ACTION == 'RUN_TEST'
         run: |
           npm run cypress:run:ci
-          TESTS_HAS_FAILURE=$(cat $TEST_RESULT_FILE_JSON | jq -r .hasFailure)
-          echo "TESTS_HAS_FAILURE=$TESTS_HAS_FAILURE" >> $GITHUB_OUTPUT
+          TEST_STATUS=$(cat $TEST_RESULT_FILE_JSON | jq -r .status)
+          echo "TEST_STATUS=$TEST_STATUS" >> $GITHUB_OUTPUT
 
-      - name: Convert Results from JSON to Markdown
+      - name: Convert results from JSON to markdown
         if: steps.parseComment.outputs.ACTION == 'RUN_TEST'
         env:
           FILE_INPUT: ${{ github.workspace }}/${{ env.TEST_RESULT_FILE_JSON }}
           FILE_OUTPUT: ${{ github.workspace }}/${{ env.TEST_RESULT_FILE_MARKDOWN }}
+          ENVIRONMENT: ${{ steps.parseComment.outputs.ENVIRONMENT }}
         run: node cypress/reporters/convertJsonToMarkdown.js
 
       - name: Comment with results
@@ -114,10 +112,27 @@ jobs:
           SHA=$(echo $PR_JSON | jq -r .head.sha)
           echo "SHA=$SHA" >> $GITHUB_OUTPUT
 
-      - name: Mark PR as checked
+      - name: Get State of the PR Check
+        id: getPRCheckState
+        if: steps.parseComment.outputs.ACTION != 'NOTHING'
+        env: 
+          ACTION: ${{ steps.parseComment.outputs.ACTION }}
+          TEST_STATUS: ${{ steps.executeTests.outputs.TEST_STATUS }}
+        run: |
+          if [[ $ACTION == "RUN_TEST" ]]
+          then
+            echo "PR_CHECK_STATE=$TEST_STATUS" >> $GITHUB_OUTPUT
+          else
+            echo "PR_CHECK_STATE=success" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Update PR check
         if: steps.parseComment.outputs.ACTION != 'NOTHING'
         env:
-          SHA: ${{ steps.getSHA.outputs.SHA  }}
+          SHA: ${{ steps.executeTests.outputs.SHA  }}
+          STATUS_CHECK_STATE: ${{ steps.getPRCheckState.outputs.PR_CHECK_STATE }}  # Can be one of: error, failure, pending, success
+          STATUS_CHECK_CONTEXT: e2e_check
+          STATUS_CHECK_DESCRIPTION: End to end testing
         run: |
           gh api \
             --method POST /repos/$GH_REPO/statuses/$SHA \
