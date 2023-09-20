@@ -18,6 +18,8 @@ jobs:
       TEST_RESULT_FILE_JSON: cypress/results/result.json
       TEST_RESULT_FILE_MARKDOWN: cypress/results/result.md
 
+      CYPRESS_REPO_TOKEN: ${{ secrets.MY_PTA }}
+
     steps:
       # - run: echo "${{ toJSON(github.workspace) }}"
       # - run: echo "${{ toJSON(github.event) }}"
@@ -65,7 +67,7 @@ jobs:
           # https://stackoverflow.com/questions/71068476/accessing-another-repository-with-github-cli-in-github-actions
           # TO-DO: Ask for SRE to generate a token in production
           # TO-DO: Use it as global env
-          token: ${{ secrets.MY_PTA }}
+          token: ${{ env.CYPRESS_REPO_TOKEN }}
 
       - name: Copy Environment Variables
         if: steps.parseComment.outputs.ACTION == 'RUN_TEST'
