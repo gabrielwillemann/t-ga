@@ -60,9 +60,9 @@ jobs:
         if: steps.parseComment.outputs.ACTION == 'RUN_TEST'
         uses: actions/checkout@v4
         with: 
-          repository: gabrielwillemann/cypress-e2e-testing
-          ref: DXP-740-integration-with-pipeline
-          # repository: viafoura/cypress-e2e-testing
+          # repository: gabrielwillemann/cypress-e2e-testing
+          # ref: DXP-740-integration-with-pipeline
+          repository: viafoura/cypress-e2e-testing
 
           # https://stackoverflow.com/questions/71068476/accessing-another-repository-with-github-cli-in-github-actions
           # TO-DO: Ask for SRE to generate a token in production
