@@ -18,7 +18,8 @@ jobs:
       TEST_RESULT_FILE_JSON: cypress/results/result.json
       TEST_RESULT_FILE_MARKDOWN: cypress/results/result.md
 
-      CYPRESS_REPO_TOKEN: ${{ secrets.MY_PTA }}
+      E2E_REPO: viafoura/cypress-e2e-testing
+      E2E_REPO_TOKEN: ${{ secrets.MY_PTA }}
 
     steps:
       # - run: echo "${{ toJSON(github.workspace) }}"
@@ -60,8 +61,8 @@ jobs:
         if: steps.parseComment.outputs.ACTION == 'RUN_TEST'
         uses: actions/checkout@v4
         with: 
-          repository: viafoura/cypress-e2e-testing
-          token: ${{ env.CYPRESS_REPO_TOKEN }}
+          repository: ${{ env.E2E_REPO }}
+          token: ${{ env.E2E_REPO_TOKEN }}
 
       - name: Copy Environment Variables
         if: steps.parseComment.outputs.ACTION == 'RUN_TEST'
