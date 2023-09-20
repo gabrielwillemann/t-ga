@@ -5,30 +5,27 @@ on:
     types: [created]
 
 jobs:
-  my_test_on_comment:
+  e2e_on_pull_request_comment:
     runs-on: ubuntu-latest
     if: ${{ github.event.issue.pull_request }}
     env:
       NODE_VERSION: 18
-      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      GH_REPO: ${{ github.repository }}
+
       PR_NUMBER: ${{ github.event.issue.number }}
       USER_NAME: ${{ github.event.comment.user.login }}
       COMMENT_TEXT: ${{ github.event.comment.body }}
+
       TEST_RESULT_FILE_JSON: cypress/results/result.json
       TEST_RESULT_FILE_MARKDOWN: cypress/results/result.md
 
       E2E_REPO: viafoura/cypress-e2e-testing
-      E2E_REPO_TOKEN: ${{ secrets.MY_PTA }}
+      E2E_REPO_TOKEN: ${{ secrets.MY_TOKEN }} # TO-DO
+
+      # It's used by Github CLI: https://cli.github.com/manual/gh_help_environment
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
+      GH_REPO: ${{ github.repository }}
 
     steps:
-      # - run: echo "${{ toJSON(github.workspace) }}"
-      # - run: echo "${{ toJSON(github.event) }}"
-      # - run: echo "${{ toJSON(github.token) }}"
-      # - run: echo "$GH_TOKEN"
-      # - run: node --version
-      # - run: npm --version
-
       - name: Parse comment
         id: parseComment
         run: |
@@ -77,8 +74,7 @@ jobs:
       - name: Execute tests
         if: steps.parseComment.outputs.ACTION == 'RUN_TEST'
         continue-on-error: true
-        run: |
-          npm run cypress:run:ci
+        run: npm run cypress:run:ci
 
       - name: Get test result
         id: getTestResult
@@ -103,8 +99,7 @@ jobs:
 
       - name: Comment tests skkiped
         if: steps.parseComment.outputs.ACTION == 'SKIP_TEST'
-        run: |
-          gh pr comment $PR_NUMBER --body "Tests skipped by @$USER_NAME"
+        run: gh pr comment $PR_NUMBER --body "Tests skipped by @$USER_NAME"
 
       - name: Get SHA of PR
         if: steps.parseComment.outputs.ACTION != 'NOTHING'
