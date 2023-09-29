@@ -19,6 +19,7 @@ jobs:
       TEST_RESULT_FILE_MARKDOWN: cypress/results/result.md
 
       E2E_REPO: viafoura/cypress-e2e-testing
+      E2E_REPO_TOKEN: ${{ secrets.MY_TOKEN }} # TO-DO
 
       # It's used by Github CLI: https://cli.github.com/manual/gh_help_environment
       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
@@ -53,20 +54,12 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
 
-      - name: Fetch SSH-KEY from AWS SSM and store to Env
-        uses: dkershner6/aws-ssm-getparameters-action@v1
-        with:
-          parameterPairs: "/app/ssh/ssh-private-key = E2E_REPO_SSH_KEY"
-          withDecryption: "false" 
-
       - name: Checkout tests
         if: steps.parseComment.outputs.ACTION == 'RUN_TEST'
         uses: actions/checkout@v4
         with: 
           repository: ${{ env.E2E_REPO }}
-          token: ${{ env.E2E_REPO_SSH_KEY }}
-
-
+          oken: ${{ env.E2E_REPO_TOKEN }}
 
       - name: Copy Environment Variables
         if: steps.parseComment.outputs.ACTION == 'RUN_TEST'
