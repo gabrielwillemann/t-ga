@@ -58,8 +58,10 @@ jobs:
         if: steps.parseComment.outputs.ACTION == 'RUN_TEST'
         uses: actions/checkout@v4
         with: 
-          repository: ${{ env.E2E_REPO }}
+          # repository: ${{ env.E2E_REPO }}
           token: ${{ env.E2E_REPO_TOKEN }}
+          repository: gabrielwillemann/cypress-e2e-testing
+          ref: DXP-740-change-ci-script-to-firefox
 
       - name: Copy Environment Variables
         if: steps.parseComment.outputs.ACTION == 'RUN_TEST'
