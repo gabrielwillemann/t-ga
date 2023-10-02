@@ -30,7 +30,7 @@ jobs:
         id: parseComment
         run: |
           IFS=" "
-          read -ra COMMENT_ARRAY <<< "$COMMENT_TEXT"
+          read -ra COMMENT_ARRAY <<< "$COMMENT_TEXT" # Split text by space
 
           COMMAND=${COMMENT_ARRAY[0]} 
           PARAMETER=${COMMENT_ARRAY[1]}
