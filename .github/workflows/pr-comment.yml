@@ -61,6 +61,7 @@ jobs:
           # repository: ${{ env.E2E_REPO }}
           token: ${{ env.E2E_REPO_TOKEN }}
           repository: gabrielwillemann/cypress-e2e-testing
+          ref: DXP-740-update-cypress
           # ref: DXP-740-change-ci-script-to-firefox
 
       - name: Copy Environment Variables
