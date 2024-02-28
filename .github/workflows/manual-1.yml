@@ -11,10 +11,21 @@ on:
         description: Environment
         type: string
         required: true
+      test:
+        description: Test (1)
+        type: string
+        required: true
 
 jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - name: Testing
-        run: echo "Ok"
+      - name: Testing (1)
+        run: |
+          echo "Log level: $VERSION"
+          echo "Environment: $ENVIRONMENT"
+          echo "Test: $TEST"
+        env:
+          VERSION: ${{ inputs.version }}
+          ENVIRONMENT: ${{ inputs.environment }}
+          TEST: ${{ inputs.test }}
