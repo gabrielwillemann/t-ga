@@ -1,0 +1,20 @@
+name: Manual
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Version
+        type: string
+        required: true
+      environment:
+        description: Environment
+        type: string
+        required: true
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Testing
+        run: echo "Ok"
