@@ -1,141 +1,141 @@
-name: PR commented
+# name: PR commented
 
-on:
-  issue_comment:
-    types: [created]
+# on:
+#   issue_comment:
+#     types: [created]
 
-jobs:
-  e2e_on_pull_request_comment:
-    runs-on: ubuntu-latest
-    if: ${{ github.event.issue.pull_request }}
-    env:
-      NODE_VERSION: 18
+# jobs:
+#   e2e_on_pull_request_comment:
+#     runs-on: ubuntu-latest
+#     if: ${{ github.event.issue.pull_request }}
+#     env:
+#       NODE_VERSION: 18
 
-      PR_NUMBER: ${{ github.event.issue.number }}
-      USER_NAME: ${{ github.event.comment.user.login }}
-      COMMENT_TEXT: ${{ github.event.comment.body }}
+#       PR_NUMBER: ${{ github.event.issue.number }}
+#       USER_NAME: ${{ github.event.comment.user.login }}
+#       COMMENT_TEXT: ${{ github.event.comment.body }}
 
-      TEST_RESULT_FILE_JSON: cypress/results/result.json
-      TEST_RESULT_FILE_MARKDOWN: cypress/results/result.md
+#       TEST_RESULT_FILE_JSON: cypress/results/result.json
+#       TEST_RESULT_FILE_MARKDOWN: cypress/results/result.md
 
-      E2E_REPO: viafoura/cypress-e2e-testing
-      E2E_REPO_TOKEN: ${{ secrets.MY_TOKEN }} # TO-DO
+#       E2E_REPO: viafoura/cypress-e2e-testing
+#       E2E_REPO_TOKEN: ${{ secrets.MY_TOKEN }} # TO-DO
 
-      # It's used by Github CLI: https://cli.github.com/manual/gh_help_environment
-      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
-      GH_REPO: ${{ github.repository }}
+#       # It's used by Github CLI: https://cli.github.com/manual/gh_help_environment
+#       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
+#       GH_REPO: ${{ github.repository }}
 
-    steps:
-      - name: Parse comment
-        id: parseComment
-        run: |
-          IFS=" "
-          read -ra COMMENT_ARRAY <<< "$COMMENT_TEXT" # Split text by space
+#     steps:
+#       - name: Parse comment
+#         id: parseComment
+#         run: |
+#           IFS=" "
+#           read -ra COMMENT_ARRAY <<< "$COMMENT_TEXT" # Split text by space
 
-          COMMAND=${COMMENT_ARRAY[0]} 
-          PARAMETER=${COMMENT_ARRAY[1]}
+#           COMMAND=${COMMENT_ARRAY[0]} 
+#           PARAMETER=${COMMENT_ARRAY[1]}
 
-          if [[ $COMMAND == "/e2e" && $PARAMETER != "" ]]
-          then
-            if [[ $PARAMETER == "skip" ]]
-            then
-              echo "ACTION=SKIP_TEST" >> $GITHUB_OUTPUT
-            else
-              echo "ACTION=RUN_TEST" >> $GITHUB_OUTPUT
-              echo "ENVIRONMENT=${PARAMETER}" >> $GITHUB_OUTPUT
-            fi
-          else
-            echo "ACTION=NOTHING" >> $GITHUB_OUTPUT
-          fi
+#           if [[ $COMMAND == "/e2e" && $PARAMETER != "" ]]
+#           then
+#             if [[ $PARAMETER == "skip" ]]
+#             then
+#               echo "ACTION=SKIP_TEST" >> $GITHUB_OUTPUT
+#             else
+#               echo "ACTION=RUN_TEST" >> $GITHUB_OUTPUT
+#               echo "ENVIRONMENT=${PARAMETER}" >> $GITHUB_OUTPUT
+#             fi
+#           else
+#             echo "ACTION=NOTHING" >> $GITHUB_OUTPUT
+#           fi
 
-      - name: Install Node ${{ env.NODE_VERSION }}
-        if: steps.parseComment.outputs.ACTION == 'RUN_TEST'
-        uses: actions/setup-node@v3
-        with:
-          node-version: ${{ env.NODE_VERSION }}
+#       - name: Install Node ${{ env.NODE_VERSION }}
+#         if: steps.parseComment.outputs.ACTION == 'RUN_TEST'
+#         uses: actions/setup-node@v3
+#         with:
+#           node-version: ${{ env.NODE_VERSION }}
 
-      - name: Checkout tests
-        if: steps.parseComment.outputs.ACTION == 'RUN_TEST'
-        uses: actions/checkout@v4
-        with: 
-          # repository: ${{ env.E2E_REPO }}
-          token: ${{ env.E2E_REPO_TOKEN }}
-          repository: gabrielwillemann/cypress-e2e-testing
-          ref: DXP-740-update-cypress
-          # ref: DXP-740-change-ci-script-to-firefox
+#       - name: Checkout tests
+#         if: steps.parseComment.outputs.ACTION == 'RUN_TEST'
+#         uses: actions/checkout@v4
+#         with: 
+#           # repository: ${{ env.E2E_REPO }}
+#           token: ${{ env.E2E_REPO_TOKEN }}
+#           repository: gabrielwillemann/cypress-e2e-testing
+#           ref: DXP-740-update-cypress
+#           # ref: DXP-740-change-ci-script-to-firefox
 
-      - name: Copy Environment Variables
-        if: steps.parseComment.outputs.ACTION == 'RUN_TEST'
-        env:
-          ENVIRONMENT: ${{ steps.parseComment.outputs.ENVIRONMENT }}
-        run: cp cypress/environmentVariables/$ENVIRONMENT.json cypress.env.json
+#       - name: Copy Environment Variables
+#         if: steps.parseComment.outputs.ACTION == 'RUN_TEST'
+#         env:
+#           ENVIRONMENT: ${{ steps.parseComment.outputs.ENVIRONMENT }}
+#         run: cp cypress/environmentVariables/$ENVIRONMENT.json cypress.env.json
 
-      - name: Install Test Dependencies
-        if: steps.parseComment.outputs.ACTION == 'RUN_TEST'
-        run: npm ci
+#       - name: Install Test Dependencies
+#         if: steps.parseComment.outputs.ACTION == 'RUN_TEST'
+#         run: npm ci
 
-      - name: Execute tests
-        if: steps.parseComment.outputs.ACTION == 'RUN_TEST'
-        continue-on-error: true
-        run: npm run cypress:run:ci
+#       - name: Execute tests
+#         if: steps.parseComment.outputs.ACTION == 'RUN_TEST'
+#         continue-on-error: true
+#         run: npm run cypress:run:ci
 
-      - name: Get test result
-        id: getTestResult
-        if: steps.parseComment.outputs.ACTION == 'RUN_TEST'
-        run: |
-          TEST_STATUS=$(cat $TEST_RESULT_FILE_JSON | jq -r .status)
-          echo "TEST_STATUS=$TEST_STATUS" >> $GITHUB_OUTPUT
+#       - name: Get test result
+#         id: getTestResult
+#         if: steps.parseComment.outputs.ACTION == 'RUN_TEST'
+#         run: |
+#           TEST_STATUS=$(cat $TEST_RESULT_FILE_JSON | jq -r .status)
+#           echo "TEST_STATUS=$TEST_STATUS" >> $GITHUB_OUTPUT
 
-      - name: Convert results from JSON to markdown
-        if: steps.parseComment.outputs.ACTION == 'RUN_TEST'
-        env:
-          FILE_INPUT: ${{ github.workspace }}/${{ env.TEST_RESULT_FILE_JSON }}
-          FILE_OUTPUT: ${{ github.workspace }}/${{ env.TEST_RESULT_FILE_MARKDOWN }}
-          ENVIRONMENT: ${{ steps.parseComment.outputs.ENVIRONMENT }}
-        run: node cypress/reporters/convertJsonToMarkdown.js
+#       - name: Convert results from JSON to markdown
+#         if: steps.parseComment.outputs.ACTION == 'RUN_TEST'
+#         env:
+#           FILE_INPUT: ${{ github.workspace }}/${{ env.TEST_RESULT_FILE_JSON }}
+#           FILE_OUTPUT: ${{ github.workspace }}/${{ env.TEST_RESULT_FILE_MARKDOWN }}
+#           ENVIRONMENT: ${{ steps.parseComment.outputs.ENVIRONMENT }}
+#         run: node cypress/reporters/convertJsonToMarkdown.js
 
-      - name: Comment with results
-        if: steps.parseComment.outputs.ACTION == 'RUN_TEST'
-        env:
-          ENVIRONMENT: ${{ steps.parseComment.outputs.ENVIRONMENT }}
-        run: cat $TEST_RESULT_FILE_MARKDOWN | gh pr comment $PR_NUMBER --body-file -
+#       - name: Comment with results
+#         if: steps.parseComment.outputs.ACTION == 'RUN_TEST'
+#         env:
+#           ENVIRONMENT: ${{ steps.parseComment.outputs.ENVIRONMENT }}
+#         run: cat $TEST_RESULT_FILE_MARKDOWN | gh pr comment $PR_NUMBER --body-file -
 
-      - name: Comment tests skkiped
-        if: steps.parseComment.outputs.ACTION == 'SKIP_TEST'
-        run: gh pr comment $PR_NUMBER --body "Tests skipped by @$USER_NAME"
+#       - name: Comment tests skkiped
+#         if: steps.parseComment.outputs.ACTION == 'SKIP_TEST'
+#         run: gh pr comment $PR_NUMBER --body "Tests skipped by @$USER_NAME"
 
-      - name: Get SHA of PR
-        if: steps.parseComment.outputs.ACTION != 'NOTHING'
-        id: getSHA
-        run: |
-          PR_JSON=$(gh api /repos/$GH_REPO/pulls/$PR_NUMBER)
-          SHA=$(echo $PR_JSON | jq -r .head.sha)
-          echo "SHA=$SHA" >> $GITHUB_OUTPUT
+#       - name: Get SHA of PR
+#         if: steps.parseComment.outputs.ACTION != 'NOTHING'
+#         id: getSHA
+#         run: |
+#           PR_JSON=$(gh api /repos/$GH_REPO/pulls/$PR_NUMBER)
+#           SHA=$(echo $PR_JSON | jq -r .head.sha)
+#           echo "SHA=$SHA" >> $GITHUB_OUTPUT
 
-      - name: Get State of the PR Check
-        id: getPRCheckState
-        if: steps.parseComment.outputs.ACTION != 'NOTHING'
-        env: 
-          ACTION: ${{ steps.parseComment.outputs.ACTION }}
-          TEST_STATUS: ${{ steps.getTestResult.outputs.TEST_STATUS }}
-        run: |
-          if [[ $ACTION == "RUN_TEST" ]]
-          then
-            echo "PR_CHECK_STATE=$TEST_STATUS" >> $GITHUB_OUTPUT
-          else
-            echo "PR_CHECK_STATE=success" >> $GITHUB_OUTPUT
-          fi
+#       - name: Get State of the PR Check
+#         id: getPRCheckState
+#         if: steps.parseComment.outputs.ACTION != 'NOTHING'
+#         env: 
+#           ACTION: ${{ steps.parseComment.outputs.ACTION }}
+#           TEST_STATUS: ${{ steps.getTestResult.outputs.TEST_STATUS }}
+#         run: |
+#           if [[ $ACTION == "RUN_TEST" ]]
+#           then
+#             echo "PR_CHECK_STATE=$TEST_STATUS" >> $GITHUB_OUTPUT
+#           else
+#             echo "PR_CHECK_STATE=success" >> $GITHUB_OUTPUT
+#           fi
 
-      - name: Update PR check
-        if: steps.parseComment.outputs.ACTION != 'NOTHING'
-        env:
-          SHA: ${{ steps.getSHA.outputs.SHA  }}
-          STATUS_CHECK_STATE: ${{ steps.getPRCheckState.outputs.PR_CHECK_STATE }}  # Can be one of: error, failure, pending, success
-          STATUS_CHECK_CONTEXT: e2e_check
-          STATUS_CHECK_DESCRIPTION: End to end testing
-        run: |
-          gh api \
-            --method POST /repos/$GH_REPO/statuses/$SHA \
-            -f state="$STATUS_CHECK_STATE" \
-            -f context="$STATUS_CHECK_CONTEXT" \
-            -f description="$STATUS_CHECK_DESCRIPTION"
+#       - name: Update PR check
+#         if: steps.parseComment.outputs.ACTION != 'NOTHING'
+#         env:
+#           SHA: ${{ steps.getSHA.outputs.SHA  }}
+#           STATUS_CHECK_STATE: ${{ steps.getPRCheckState.outputs.PR_CHECK_STATE }}  # Can be one of: error, failure, pending, success
+#           STATUS_CHECK_CONTEXT: e2e_check
+#           STATUS_CHECK_DESCRIPTION: End to end testing
+#         run: |
+#           gh api \
+#             --method POST /repos/$GH_REPO/statuses/$SHA \
+#             -f state="$STATUS_CHECK_STATE" \
+#             -f context="$STATUS_CHECK_CONTEXT" \
+#             -f description="$STATUS_CHECK_DESCRIPTION"

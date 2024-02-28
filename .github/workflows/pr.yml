@@ -10,21 +10,7 @@ permissions:
 jobs:
   my_build:
     runs-on: ubuntu-latest
-    env:
-      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      GH_REPO: ${{ github.repository }}
-      SHA: ${{ github.event.pull_request.head.sha }}
-      STATUS_CHECK_STATE: pending
-      STATUS_CHECK_CONTEXT: e2e_check
-      STATUS_CHECK_DESCRIPTION: End to end testing
     steps:
       - run: echo "${{ toJSON(github.event) }}"
       - name: "Build"
         run: echo "Ok"
-      - name: "E2E"
-        run: |
-          gh api \
-            --method POST /repos/$GH_REPO/statuses/$SHA \
-            -f state="$STATUS_CHECK_STATE" \
-            -f context="$STATUS_CHECK_CONTEXT" \
-            -f description="$STATUS_CHECK_DESCRIPTION"
