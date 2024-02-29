@@ -1,0 +1,31 @@
+name: Manual
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Version
+        type: string
+        required: true
+      environment:
+        description: Environment
+        type: string
+        required: true
+      param_test:
+        description: Manual Workflow (3)
+        type: string
+        required: true
+
+jobs:
+  job1:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Step 1 - Manual Workflow (3)
+        run: |
+          echo "Log level: $VERSION"
+          echo "Environment: $ENVIRONMENT"
+          echo "Param Test: $PARAM_TEST"
+        env:
+          VERSION: ${{ inputs.version }}
+          ENVIRONMENT: ${{ inputs.environment }}
+          PARAM_TEST: ${{ inputs.param_test }}
