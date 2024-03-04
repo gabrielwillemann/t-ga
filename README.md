@@ -12,7 +12,3 @@ Testing Github Actions
 
 ## Problem
 
-## Another problem
-
-## problem 3
-
